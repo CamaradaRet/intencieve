@@ -1,9 +1,10 @@
 package ru.aston.plugin_ki;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalDouble;
+import ru.aston.plugin_ki.classes.ListOfEvents;
+import ru.aston.plugin_ki.classes.Season;
+
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -135,4 +136,40 @@ public class StreamExercises {
             System.out.println("\nСреднее арифметическое: " + average.getAsDouble());
          }
     }
+
+    //разделить даты в Stream на четыре группы по временам года, посчитать количество событий в каждом времени года
+    public static void getNumberEvents(){
+        List<LocalDate> eventsAndDate = ListOfEvents.getDates();
+
+        Map<Season, Long> eventBySeason = eventsAndDate.stream()
+                .collect(Collectors.groupingBy(Season :: getSeason,
+                        Collectors.counting()));
+
+        eventBySeason.forEach((season, count) ->
+                System.out.println(season + ": " + count + " событий"));
+
+    }
+
+    //разделить файлы в Stream на два списка: с расширением .txt и с расширением .doc, посчитать количество файлов в каждом списке
+    public static void differentFiles(){
+        List<String> files = List.of(
+                "file1.txt",
+                "file2.zip",
+                "file3.txt",
+                "file4.doc",
+                "file5.txt",
+                "file6.pdf",
+                "file7.mp4",
+                "file8.doc"
+        );
+
+        Map<Boolean, Long> filesCount = files.stream()
+                .filter(file -> file.endsWith(".txt") || file.endsWith(".doc"))
+                .collect(Collectors.partitioningBy(file -> file.endsWith(".txt"),
+                        Collectors.counting()));
+
+        System.out.println("Файлов с расширением \".txt\": " + filesCount.get(true));
+        System.out.println("Файлов с расширением \".doc\": " + filesCount.get(false));
+    }
+
 }
